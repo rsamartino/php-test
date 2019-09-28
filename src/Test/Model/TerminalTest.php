@@ -19,54 +19,61 @@ class TerminalTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->terminal = new Terminal();
         $this->database = new \Filebase\Database([
-            'dir' => __DIR__ . '/../../database'
+            'dir' => __DIR__ . '/testDatabase'
         ]);
+        $this->terminal = new Terminal($this->database);
+        $this->setPricing();
     }
 
-    public function testTotal()
+    protected function tearDown(): void
     {
-
+        $this->database->truncate();
     }
 
-    public function testScan()
+    public function testScenario1()
     {
+        $this->terminal->scan('A', 1);
+        $this->terminal->scan('B', 1);
+        $this->terminal->scan('C', 1);
+        $this->terminal->scan('D', 1);
+        $this->terminal->scan('A', 1);
+        $this->terminal->scan('B', 1);
+        $this->terminal->scan('A', 1);
+        $this->terminal->scan('A', 1);
 
+        $this->assertEquals(32.4, $this->terminal->total(1));
     }
 
-    public function testSetPricing()
+    public function testScenario2()
+    {
+        $this->terminal->scan('C', 2);
+        $this->terminal->scan('C', 2);
+        $this->terminal->scan('C', 2);
+        $this->terminal->scan('C', 2);
+        $this->terminal->scan('C', 2);
+        $this->terminal->scan('C', 2);
+        $this->terminal->scan('C', 2);
+
+        $this->assertEquals(7.25, $this->terminal->total(2));
+    }
+
+    public function testScenario3()
+    {
+        $this->terminal->scan('A', 3);
+        $this->terminal->scan('B', 3);
+        $this->terminal->scan('C', 3);
+        $this->terminal->scan('D', 3);
+
+        $this->assertEquals(15.4, $this->terminal->total(3));
+    }
+
+    private function setPricing()
     {
         $this->terminal->setPricing('A', 2, 4, 7);
         $this->terminal->setPricing('B', 12);
         $this->terminal->setPricing('C', 1.25, 6, 6);
         $this->terminal->setPricing('D', .15);
-
-        $a = $this->database->get('A');
-        $b = $this->database->get('B');
-        $c = $this->database->get('C');
-        $d = $this->database->get('D');
-
-        $this->assertEquals(2, $a->price);
-        $this->assertEquals(4, $a->discountQty);
-        $this->assertEquals(7, $a->discountPrice);
-
-        $this->assertEquals(12, $b->price);
-        $this->assertEquals(null, $b->discountQty);
-        $this->assertEquals(null, $b->discountPrice);
-
-        $this->assertEquals(1.25, $c->price);
-        $this->assertEquals(6, $c->discountQty);
-        $this->assertEquals(6, $c->discountPrice);
-
-        $this->assertEquals(.15, $d->price);
-        $this->assertEquals(null, $d->discountQty);
-        $this->assertEquals(null, $d->discountPrice);
-
     }
 
-    public function test__construct()
-    {
-
-    }
 }
