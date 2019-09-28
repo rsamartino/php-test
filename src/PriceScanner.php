@@ -31,24 +31,22 @@ class PriceScanner
     {
         $total = 0;
 
-//        print_r(array_count_values($this->cart->items));
-
         foreach (array_count_values($this->cart->items) as $code => $count) {
             $priceData = $this->database->get($code);
-            if ($priceData->discountQty && ($count <=> $priceData->discountQty) >= 0) {
-                echo "$code is greater" . PHP_EOL . ($count - $priceData->discountQty) . PHP_EOL . PHP_EOL;
-                $total += $priceData->discountPrice + (($count - $priceData->discountQty) * $priceData->price);
-                echo 'total: ' . $total . PHP_EOL;
+            if ($priceData->discountQty && ($count - $priceData->discountQty) >= 0) {
+//                echo "$code is greater" . PHP_EOL . ($count - $priceData->discountQty) . PHP_EOL . PHP_EOL;
+                $numberOfDiscountQtys = intdiv($count, $priceData->discountQty); //return integer quotient of the division
+                echo $numberOfDiscountQtys . PHP_EOL;
+                $numberOfNonDiscountItems = $count % $priceData->discountQty; //find division remainder
+                echo $numberOfNonDiscountItems . PHP_EOL;
+
+                $total += $numberOfDiscountQtys * $priceData->discountPrice + ($numberOfNonDiscountItems * $priceData->price);
+//                echo 'total: ' . $total . PHP_EOL;
             } else {
-                echo "$code is not greater" . PHP_EOL;
+//                echo "$code is not greater" . PHP_EOL;
                 $total += $this->database->get($code)->price * $count;
             }
         }
-
-//        foreach ($this->cart->items as $item) {
-//        }
-
-
 
         echo $total . PHP_EOL;
     }
