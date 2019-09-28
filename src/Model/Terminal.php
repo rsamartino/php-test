@@ -7,11 +7,9 @@ class Terminal implements \Rich\Api\Terminal
 {
     private $database;
 
-    public function __construct()
+    public function __construct(\Filebase\Database $database)
     {
-        $this->database = new \Filebase\Database([
-            'dir' => __DIR__ . '/database'
-        ]);
+        $this->database = $database;
     }
 
     public function setPricing(string $code, float $price, int $discountQty = null, float $discountPrice = null)
@@ -49,6 +47,6 @@ class Terminal implements \Rich\Api\Terminal
             }
         }
 
-        echo $total . PHP_EOL;
+        return $total;
     }
 }
