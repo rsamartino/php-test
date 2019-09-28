@@ -17,12 +17,5 @@ class PriceSetter
         $item->discountQty = $discountQty;
         $item->discountPrice = $discountPrice;
         $item->save();
-
-//        echo $item->getId() . PHP_EOL;
-    }
-
-    public function scan(string $code)
-    {
-
     }
 }
