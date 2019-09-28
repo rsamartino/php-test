@@ -1,0 +1,9 @@
+{
+    "__created_at": 1569710318,
+    "__updated_at": 1569710810,
+    "data": {
+        "price": 2,
+        "discountQty": 4,
+        "discountPrice": 7
+    }
+}

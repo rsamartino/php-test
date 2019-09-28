@@ -1,6 +1,6 @@
 <?php
 
-namespace Rich;
+namespace Rich\Model;
 
 
 class Terminal implements \Rich\Api\Terminal
