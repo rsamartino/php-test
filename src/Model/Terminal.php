@@ -5,13 +5,27 @@ namespace Rich\Model;
 
 class Terminal implements \Rich\Api\Terminal
 {
+    /**
+     * @var \Filebase\Database
+     */
     private $database;
 
+    /**
+     * Terminal constructor.
+     * @param \Filebase\Database $database
+     */
     public function __construct(\Filebase\Database $database)
     {
         $this->database = $database;
     }
 
+    /**
+     * @param string $code
+     * @param float $price
+     * @param int|null $discountQty
+     * @param float|null $discountPrice
+     * @return mixed|void
+     */
     public function setPricing(string $code, float $price, int $discountQty = null, float $discountPrice = null)
     {
         $item = $this->database->get($code);
@@ -21,6 +35,11 @@ class Terminal implements \Rich\Api\Terminal
         $item->save();
     }
 
+    /**
+     * @param string $code
+     * @param int $cartId
+     * @return mixed|void
+     */
     public function scan(string $code, int $cartId)
     {
         $cart = $this->database->get($cartId);
@@ -28,6 +47,10 @@ class Terminal implements \Rich\Api\Terminal
         $cart->save();
     }
 
+    /**
+     * @param int $cartId
+     * @return float|int|mixed
+     */
     public function total(int $cartId)
     {
         $total = 0;
