@@ -28,7 +28,7 @@ class Terminal implements \Rich\Api\Terminal
      */
     public function setPricing(string $code, float $price, int $discountQty = null, float $discountPrice = null)
     {
-        $item = $this->database->get($code);
+        $item = $this->database->get($code); //create or update price by code
         $item->price = $price;
         $item->discountQty = $discountQty;
         $item->discountPrice = $discountPrice;
@@ -42,8 +42,8 @@ class Terminal implements \Rich\Api\Terminal
      */
     public function scan(string $code, int $cartId)
     {
-        $cart = $this->database->get($cartId);
-        $cart->items[] = $code;
+        $cart = $this->database->get($cartId); //create or update shopping cart
+        $cart->items[] = $code; //add array of items
         $cart->save();
     }
 
@@ -56,17 +56,17 @@ class Terminal implements \Rich\Api\Terminal
         $total = 0;
         $cart = $this->database->get($cartId);
 
-        foreach (array_count_values($cart->items) as $code => $count) {
-            $priceData = $this->database->get($code);
-            if ($priceData->discountQty && ($count - $priceData->discountQty) >= 0) {
-                $numberOfDiscountQtys = intdiv($count, $priceData->discountQty); //return integer quotient of the division
-                echo $numberOfDiscountQtys . PHP_EOL;
-                $numberOfNonDiscountItems = $count % $priceData->discountQty; //find division remainder
-                echo $numberOfNonDiscountItems . PHP_EOL;
+        foreach (array_count_values($cart->items) as $code => $count) { //iterate through count of each item type
+            $priceData = $this->database->get($code); //get product price data
 
-                $total += $numberOfDiscountQtys * $priceData->discountPrice + ($numberOfNonDiscountItems * $priceData->price);
+            if ($priceData->discountQty && ($count - $priceData->discountQty) >= 0) { //check if count meets discount threshold
+                $numberOfDiscountQtys = intdiv($count, $priceData->discountQty); //return integer quotient of the division
+                $numberOfNonDiscountItems = $count % $priceData->discountQty; //find division remainder
+
+                //calculate total based on above info
+                $total += $numberOfDiscountQtys * $priceData->discountPrice + $numberOfNonDiscountItems * $priceData->price;
             } else {
-                $total += $this->database->get($code)->price * $count;
+                $total += $priceData->price * $count;
             }
         }
 
